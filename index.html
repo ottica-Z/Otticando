@@ -15,56 +15,253 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
 
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
 html,body{
-  margin:0;width:100%;height:100%;overflow:hidden;background:#fff;
-  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
 }
-#app{width:100vw;height:100vh;position:relative;background:#fff;overflow:hidden}
-#home,#testScreen{
-  position:absolute;inset:0;align-items:center;justify-content:center
+
+#app{
+  position:relative;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
 }
-#home{display:flex;background:#fff;cursor:pointer}
-#testScreen{display:none;background:#fff}
-#homeImage,#testImage{
-  width:100%;height:100%;object-fit:contain;display:block;
-  user-select:none;-webkit-user-drag:none
+
+/* SPLASH */
+#splash{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#050403;
+  cursor:pointer;
+  z-index:4;
 }
-#homeButton{
-  position:absolute;top:max(20px,env(safe-area-inset-top));left:20px;
-  width:46px;height:46px;border-radius:50%;
+
+#splashImage{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+/* SCHERMATA CLINICA */
+#menuScreen{
+  position:absolute;
+  inset:0;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:
+    linear-gradient(180deg,#ffffff 0%,#f6f6f4 100%);
+  padding:50px 34px;
+  z-index:3;
+}
+
+#menuLogo{
+  width:min(22vw,150px);
+  height:auto;
+  margin-bottom:22px;
+}
+
+#menuTitle{
+  margin:0;
+  font-size:clamp(34px,6vw,58px);
+  font-weight:500;
+  color:#191919;
+  letter-spacing:-0.02em;
+}
+
+#menuSubtitle{
+  margin-top:10px;
+  margin-bottom:46px;
+  font-size:clamp(14px,2vw,18px);
+  color:#777;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.modeCard{
+  width:min(88vw,680px);
+  background:#fff;
+  border:1px solid #dedede;
+  border-radius:24px;
+  padding:28px 28px;
+  margin:12px 0;
+  box-shadow:0 8px 24px rgba(0,0,0,.05);
+}
+
+.modeLabel{
+  font-size:13px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#a07a2c;
+  margin-bottom:8px;
+}
+
+.modeTitle{
+  margin:0 0 8px;
+  font-size:clamp(24px,4vw,34px);
+  color:#171717;
+  font-weight:600;
+}
+
+.modeText{
+  margin:0 0 24px;
+  color:#777;
+  font-size:clamp(14px,2vw,18px);
+  line-height:1.5;
+}
+
+.modeButton{
+  width:100%;
+  border:none;
+  border-radius:16px;
+  padding:18px 22px;
+  background:#171717;
+  color:white;
+  font-size:clamp(15px,2.2vw,19px);
+  letter-spacing:.08em;
+  cursor:pointer;
+}
+
+.modeButton.gold{
+  background:linear-gradient(90deg,#9d731f,#d5ab50,#9d731f);
+  color:#111;
+}
+
+/* SCHERMATE TEST */
+.testScreen{
+  position:absolute;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:white;
+  z-index:2;
+}
+
+.testImage{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+  background:white;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+.homeButton{
+  position:absolute;
+  top:max(20px,env(safe-area-inset-top));
+  left:20px;
+  width:46px;
+  height:46px;
+  border-radius:50%;
   border:1px solid rgba(0,0,0,.15);
-  background:rgba(255,255,255,.88);
-  font-size:22px;cursor:pointer
+  background:rgba(255,255,255,.9);
+  font-size:22px;
+  cursor:pointer;
+  z-index:10;
 }
+
 #counter{
-  position:absolute;top:max(26px,env(safe-area-inset-top));right:25px;
-  font-size:14px;color:rgba(0,0,0,.45);letter-spacing:1px
+  position:absolute;
+  top:max(26px,env(safe-area-inset-top));
+  right:25px;
+  font-size:14px;
+  color:rgba(0,0,0,.45);
+  letter-spacing:1px;
 }
 </style>
 </head>
 
 <body>
+
 <div id="app">
 
-  <!-- HOME: tocca l'immagine per iniziare -->
-  <div id="home">
-    <img id="homeImage"
-         src="https://ottica-z.github.io/Otticando/home.png?v=4"
+  <!-- SPLASH -->
+  <div id="splash">
+    <img id="splashImage"
+         src="https://ottica-z.github.io/Otticando/home.png?v=9"
          alt="Otticando">
   </div>
 
-  <!-- TEST -->
-  <div id="testScreen">
-    <img id="testImage" src="" alt="Test visivo">
-    <button id="homeButton" aria-label="Torna alla home">×</button>
+  <!-- MENU CLINICO -->
+  <div id="menuScreen">
+
+    <img id="menuLogo"
+         src="https://ottica-z.github.io/Otticando/icon-512.png?v=9"
+         alt="Otticando">
+
+    <h1 id="menuTitle">Otticando</h1>
+
+    <div id="menuSubtitle">
+      Seleziona la modalità di valutazione
+    </div>
+
+    <div class="modeCard">
+      <div class="modeLabel">Visione da lontano</div>
+      <h2 class="modeTitle">Test per lontano</h2>
+      <p class="modeText">
+        Valutazione dell’acuità visiva e delle funzioni visive a distanza.
+      </p>
+
+      <button id="farButton" class="modeButton">
+        INIZIA TEST PER LONTANO
+      </button>
+    </div>
+
+    <div class="modeCard">
+      <div class="modeLabel">Visione prossimale</div>
+      <h2 class="modeTitle">Test per vicino</h2>
+      <p class="modeText">
+        Valutazione dell’acuità visiva a distanza prossimale.
+      </p>
+
+      <button id="nearButton" class="modeButton gold">
+        INIZIA TEST PER VICINO
+      </button>
+    </div>
+
+  </div>
+
+  <!-- TEST LONTANO -->
+  <div id="farScreen" class="testScreen">
+    <img id="farImage" class="testImage" src="" alt="Test visivo per lontano">
+    <button id="farHomeButton" class="homeButton">×</button>
     <div id="counter"></div>
+  </div>
+
+  <!-- TEST VICINO -->
+  <div id="nearScreen" class="testScreen">
+    <img id="nearImage"
+         class="testImage"
+         src="https://ottica-z.github.io/Otticando/vicino.png?v=9"
+         alt="Test visivo per vicino">
+
+    <button id="nearHomeButton" class="homeButton">×</button>
   </div>
 
 </div>
 
 <script>
-const tests = [
+
+/* TEST DA LONTANO */
+const farTests = [
   "https://ottica-z.github.io/Otticando/0.1.png",
   "https://ottica-z.github.io/Otticando/test-03.png",
   "https://ottica-z.github.io/Otticando/test-02.png",
@@ -75,61 +272,154 @@ const tests = [
 
 let currentTest = 0;
 let touchStartX = 0;
+let splashFinished = false;
 
-const home = document.getElementById("home");
-const testScreen = document.getElementById("testScreen");
-const testImage = document.getElementById("testImage");
+const splash = document.getElementById("splash");
+const menuScreen = document.getElementById("menuScreen");
+
+const farScreen = document.getElementById("farScreen");
+const farImage = document.getElementById("farImage");
 const counter = document.getElementById("counter");
-const homeButton = document.getElementById("homeButton");
 
-function showTest(i){
-  currentTest = i;
-  testImage.src = tests[i] + "?v=4";
-  counter.textContent = (i + 1) + " / " + tests.length;
-  home.style.display = "none";
-  testScreen.style.display = "flex";
+const nearScreen = document.getElementById("nearScreen");
+
+const farButton = document.getElementById("farButton");
+const nearButton = document.getElementById("nearButton");
+
+const farHomeButton = document.getElementById("farHomeButton");
+const nearHomeButton = document.getElementById("nearHomeButton");
+
+
+/* SPLASH 7 SECONDI */
+function showMenu(){
+  if(splashFinished) return;
+
+  splashFinished = true;
+  splash.style.display = "none";
+  menuScreen.style.display = "flex";
 }
 
-function goHome(){
-  testScreen.style.display = "none";
-  home.style.display = "flex";
+const splashTimer = setTimeout(showMenu, 7000);
+
+splash.addEventListener("click", () => {
+  clearTimeout(splashTimer);
+  showMenu();
+});
+
+
+/* TEST LONTANO */
+function showFarTest(index){
+  currentTest = index;
+
+  farImage.src = farTests[index] + "?v=9";
+
+  counter.textContent =
+    (index + 1) + " / " + farTests.length;
+
+  menuScreen.style.display = "none";
+  nearScreen.style.display = "none";
+  farScreen.style.display = "flex";
+}
+
+function nextFarTest(){
+  if(currentTest < farTests.length - 1){
+    showFarTest(currentTest + 1);
+  } else {
+    showMenuFromTest();
+  }
+}
+
+function previousFarTest(){
+  if(currentTest > 0){
+    showFarTest(currentTest - 1);
+  }
+}
+
+
+/* TEST VICINO */
+function showNearTest(){
+  menuScreen.style.display = "none";
+  farScreen.style.display = "none";
+  nearScreen.style.display = "flex";
+}
+
+
+/* TORNA AL MENU */
+function showMenuFromTest(){
+  farScreen.style.display = "none";
+  nearScreen.style.display = "none";
+  menuScreen.style.display = "flex";
   currentTest = 0;
 }
 
-function nextTest(){
-  currentTest < tests.length - 1 ? showTest(currentTest + 1) : goHome();
-}
 
-function previousTest(){
-  if(currentTest > 0) showTest(currentTest - 1);
-}
+/* PULSANTI MENU */
+farButton.addEventListener("click", () => {
+  showFarTest(0);
+});
 
-home.addEventListener("click", () => showTest(0));
+nearButton.addEventListener("click", () => {
+  showNearTest();
+});
 
-homeButton.addEventListener("click", e => {
+
+/* HOME */
+farHomeButton.addEventListener("click", e => {
   e.stopPropagation();
-  goHome();
+  showMenuFromTest();
 });
 
-testScreen.addEventListener("click", e => {
-  if(e.target === homeButton) return;
-  e.clientX > window.innerWidth / 2 ? nextTest() : previousTest();
+nearHomeButton.addEventListener("click", e => {
+  e.stopPropagation();
+  showMenuFromTest();
 });
 
-testScreen.addEventListener("touchstart", e => {
+
+/* TAP TEST LONTANO */
+farScreen.addEventListener("click", e => {
+
+  if(e.target === farHomeButton) return;
+
+  if(e.clientX > window.innerWidth / 2){
+    nextFarTest();
+  } else {
+    previousFarTest();
+  }
+
+});
+
+
+/* SWIPE TEST LONTANO */
+farScreen.addEventListener("touchstart", e => {
   touchStartX = e.changedTouches[0].screenX;
 }, {passive:true});
 
-testScreen.addEventListener("touchend", e => {
-  const d = e.changedTouches[0].screenX - touchStartX;
-  if(Math.abs(d) < 60) return;
-  d < 0 ? nextTest() : previousTest();
+farScreen.addEventListener("touchend", e => {
+
+  const difference =
+    e.changedTouches[0].screenX - touchStartX;
+
+  if(Math.abs(difference) < 60) return;
+
+  if(difference < 0){
+    nextFarTest();
+  } else {
+    previousFarTest();
+  }
+
 }, {passive:true});
 
-tests.forEach(src => {
+
+/* PRECARICAMENTO */
+farTests.forEach(src => {
   const img = new Image();
-  img.src = src + "?v=4";
+  img.src = src + "?v=9";
 });
+
+const nearPreload = new Image();
+nearPreload.src =
+  "https://ottica-z.github.io/Otticando/vicino.png?v=9";
+
 </script>
 
 </body>
