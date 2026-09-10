@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+
+<title>Otticando</title>
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Otticando">
+<meta name="theme-color" content="#050403">
+
+<link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{
+  margin:0;width:100%;height:100%;overflow:hidden;background:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif
+}
+#app{width:100vw;height:100vh;position:relative;background:#fff;overflow:hidden}
+#home,#testScreen{
+  position:absolute;inset:0;align-items:center;justify-content:center
+}
+#home{display:flex;background:#fff;cursor:pointer}
+#testScreen{display:none;background:#fff}
+#homeImage,#testImage{
+  width:100%;height:100%;object-fit:contain;display:block;
+  user-select:none;-webkit-user-drag:none
+}
+#homeButton{
+  position:absolute;top:max(20px,env(safe-area-inset-top));left:20px;
+  width:46px;height:46px;border-radius:50%;
+  border:1px solid rgba(0,0,0,.15);
+  background:rgba(255,255,255,.88);
+  font-size:22px;cursor:pointer
+}
+#counter{
+  position:absolute;top:max(26px,env(safe-area-inset-top));right:25px;
+  font-size:14px;color:rgba(0,0,0,.45);letter-spacing:1px
+}
+</style>
+</head>
+
+<body>
+<div id="app">
+
+  <!-- HOME: tocca l'immagine per iniziare -->
+  <div id="home">
+    <img id="homeImage"
+         src="https://ottica-z.github.io/Otticando/home.png?v=4"
+         alt="Otticando">
+  </div>
+
+  <!-- TEST -->
+  <div id="testScreen">
+    <img id="testImage" src="" alt="Test visivo">
+    <button id="homeButton" aria-label="Torna alla home">×</button>
+    <div id="counter"></div>
+  </div>
+
+</div>
+
+<script>
+const tests = [
+  "https://ottica-z.github.io/Otticando/0.1.png",
+  "https://ottica-z.github.io/Otticando/test-03.png",
+  "https://ottica-z.github.io/Otticando/test-02.png",
+  "https://ottica-z.github.io/Otticando/test-04.png",
+  "https://ottica-z.github.io/Otticando/test-01.png",
+  "https://ottica-z.github.io/Otticando/r_v.png"
+];
+
+let currentTest = 0;
+let touchStartX = 0;
+
+const home = document.getElementById("home");
+const testScreen = document.getElementById("testScreen");
+const testImage = document.getElementById("testImage");
+const counter = document.getElementById("counter");
+const homeButton = document.getElementById("homeButton");
+
+function showTest(i){
+  currentTest = i;
+  testImage.src = tests[i] + "?v=4";
+  counter.textContent = (i + 1) + " / " + tests.length;
+  home.style.display = "none";
+  testScreen.style.display = "flex";
+}
+
+function goHome(){
+  testScreen.style.display = "none";
+  home.style.display = "flex";
+  currentTest = 0;
+}
+
+function nextTest(){
+  currentTest < tests.length - 1 ? showTest(currentTest + 1) : goHome();
+}
+
+function previousTest(){
+  if(currentTest > 0) showTest(currentTest - 1);
+}
+
+home.addEventListener("click", () => showTest(0));
+
+homeButton.addEventListener("click", e => {
+  e.stopPropagation();
+  goHome();
+});
+
+testScreen.addEventListener("click", e => {
+  if(e.target === homeButton) return;
+  e.clientX > window.innerWidth / 2 ? nextTest() : previousTest();
+});
+
+testScreen.addEventListener("touchstart", e => {
+  touchStartX = e.changedTouches[0].screenX;
+}, {passive:true});
+
+testScreen.addEventListener("touchend", e => {
+  const d = e.changedTouches[0].screenX - touchStartX;
+  if(Math.abs(d) < 60) return;
+  d < 0 ? nextTest() : previousTest();
+}, {passive:true});
+
+tests.forEach(src => {
+  const img = new Image();
+  img.src = src + "?v=4";
+});
+</script>
+
+</body>
+</html>
