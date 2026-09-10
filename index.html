@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="theme-color" content="#ffffff" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="assets/icon-180.png" />
+<title>Otticando</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body,#app{margin:0;width:100%;height:100%;overflow:hidden;background:#fff;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}.screen{position:fixed;inset:0;background:#fff}.home{display:flex;align-items:center;justify-content:center;background:#fff}.home-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}.start{position:absolute;left:50%;top:70.5%;transform:translate(-50%,-50%);width:min(25vw,220px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(0,0,0,.18);background:rgba(255,255,255,.86);backdrop-filter:blur(7px);font-size:clamp(16px,2vw,25px);letter-spacing:.16em;line-height:1.35;box-shadow:0 10px 28px rgba(0,0,0,.12);cursor:pointer}.test{display:none;touch-action:none;user-select:none;-webkit-user-select:none}.test img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;background:#fff}.zone{position:absolute;top:0;bottom:0;width:50%;z-index:3}.prev{left:0}.next{right:0}.exit{position:absolute;z-index:4;top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.72);font-size:21px;opacity:.18}.exit:active{opacity:.75}.hint{position:absolute;bottom:max(10px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:4;font-size:12px;letter-spacing:.08em;color:#777;opacity:0;transition:opacity .2s}.test.show-hint .hint{opacity:.45}@media (orientation:landscape){.start{top:72%;width:min(18vw,190px)}}
+</style>
+</head>
+<body><main id="app">
+<section id="home" class="screen home"><img class="home-art" src="assets/home.png" alt="Otticando di Antonio Contino"><button id="start" class="start" aria-label="Inizia il test">INIZIA<br>IL TEST<br>→</button></section>
+<section id="test" class="screen test" aria-live="polite"><img id="stimulus" alt="Schermata del test"><div class="zone prev" id="prev"></div><div class="zone next" id="next"></div><button class="exit" id="exit" aria-label="Torna alla home">×</button><div class="hint" id="hint"></div></section>
+</main><script>
+const tests=['assets/test-01.png','assets/test-02.png','assets/test-03.png','assets/test-04.png','assets/test-05.png'];
+let i=0, x0=null; const home=document.querySelector('#home'), test=document.querySelector('#test'), img=document.querySelector('#stimulus'), hint=document.querySelector('#hint');
+function show(n){i=Math.max(0,Math.min(tests.length-1,n));img.src=tests[i];hint.textContent=`${i+1} / ${tests.length}`;}
+function begin(){home.style.display='none';test.style.display='block';show(0);document.documentElement.requestFullscreen?.().catch(()=>{});}
+function end(){test.style.display='none';home.style.display='flex';document.exitFullscreen?.().catch(()=>{});}
+function next(){if(i<tests.length-1)show(i+1);else end();} function prev(){if(i>0)show(i-1);}
+document.querySelector('#start').onclick=begin;document.querySelector('#next').onclick=next;document.querySelector('#prev').onclick=prev;document.querySelector('#exit').onclick=end;
+test.addEventListener('touchstart',e=>{x0=e.changedTouches[0].clientX},{passive:true});test.addEventListener('touchend',e=>{if(x0===null)return;let dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>55){dx<0?next():prev()}},{passive:true});
+addEventListener('keydown',e=>{if(test.style.display!=='block')return;if(e.key==='ArrowRight'||e.key===' ')next();if(e.key==='ArrowLeft')prev();if(e.key==='Escape')end();});
+let timer;test.addEventListener('pointerdown',()=>timer=setTimeout(()=>test.classList.add('show-hint'),700));test.addEventListener('pointerup',()=>{clearTimeout(timer);setTimeout(()=>test.classList.remove('show-hint'),700)});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+</script></body></html>
