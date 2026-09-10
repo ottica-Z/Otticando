@@ -1,0 +1,10 @@
+{
+  "name": "Otticando",
+  "short_name": "Otticando",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#050403",
+  "orientation": "any"
+}
