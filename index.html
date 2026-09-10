@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Otticando</title>
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Otticando">
+<meta name="theme-color" content="#050403">
+
+<link rel="apple-touch-icon" href="icon-180.png?v=5">
+<link rel="icon" href="icon-512.png?v=5">
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{
+  margin:0;width:100%;height:100%;
+  overflow:hidden;background:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif
+}
+button{font:inherit}
+#app{position:relative;width:100vw;height:100dvh;overflow:hidden;background:#fff}
+
+/* SPLASH */
+#splash{
+  position:absolute;inset:0;z-index:30;
+  display:flex;align-items:center;justify-content:center;
+  background:#050403;cursor:pointer
+}
+#splash img{
+  width:100%;height:100%;
+  object-fit:cover;display:block;
+  user-select:none;-webkit-user-drag:none
+}
+
+/* MENU */
+#menu{
+  position:absolute;inset:0;z-index:20;
+  display:none;flex-direction:column;align-items:center;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:max(24px,env(safe-area-inset-top)) 28px max(30px,env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,#fbfbfa,#f3f3f0)
+}
+#logo{
+  width:min(15vw,105px);height:auto;
+  border-radius:24px;margin-bottom:10px
+}
+h1{
+  margin:0;font-size:clamp(32px,5vw,50px);
+  font-weight:550;letter-spacing:-.03em;color:#171717
+}
+.subtitle{
+  margin:7px 0 18px;
+  font-size:clamp(12px,1.7vw,15px);
+  letter-spacing:.12em;text-transform:uppercase;color:#777
+}
+.panel,.mode{
+  width:min(88vw,720px);
+  background:#fff;border:1px solid #d9d9d5;
+  border-radius:20px;padding:18px 20px;
+  margin:7px 0;box-shadow:0 8px 24px rgba(0,0,0,.04)
+}
+.panel-title,.label{
+  font-size:12px;letter-spacing:.14em;
+  text-transform:uppercase;color:#9a7428;margin-bottom:8px
+}
+#distanceButtons{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:9px
+}
+.dist{
+  border:1px solid #cfcfca;background:#f5f5f2;color:#222;
+  border-radius:12px;padding:12px 8px;font-weight:650
+}
+.dist.active{background:#171717;color:#fff;border-color:#171717}
+.note{
+  margin-top:9px;color:#777;font-size:12px;line-height:1.4
+}
+.mode h2{
+  margin:0 0 6px;font-size:clamp(22px,3vw,29px);
+  font-weight:620;color:#171717
+}
+.mode p{
+  margin:0 0 14px;color:#6d6d6d;
+  font-size:clamp(14px,1.8vw,16px);line-height:1.4
+}
+.start{
+  width:100%;border:0;border-radius:14px;
+  padding:15px 18px;background:#171717;color:#fff;
+  letter-spacing:.06em;cursor:pointer
+}
+.start.gold{
+  background:linear-gradient(90deg,#a77a20,#dab45d,#a77a20);
+  color:#111
+}
+
+/* TEST */
+.screen{
+  position:absolute;inset:0;z-index:10;
+  display:none;align-items:center;justify-content:center;
+  background:#fff;overflow:hidden
+}
+.imageStage{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;background:#fff
+}
+.testImage{
+  display:block;
+  max-width:100%;
+  max-height:100%;
+  width:auto;height:auto;
+  object-fit:contain;
+  user-select:none;-webkit-user-drag:none;
+  transform-origin:center center;
+  transition:transform .15s ease
+}
+.close{
+  position:absolute;z-index:12;
+  top:max(18px,env(safe-area-inset-top));left:18px;
+  width:46px;height:46px;border-radius:50%;
+  border:1px solid rgba(0,0,0,.15);
+  background:rgba(255,255,255,.94);color:#111;
+  font-size:24px;line-height:42px;cursor:pointer
+}
+#counter{
+  position:absolute;z-index:12;
+  top:max(25px,env(safe-area-inset-top));right:22px;
+  padding:5px 8px;border-radius:9px;
+  background:rgba(255,255,255,.88);
+  color:rgba(0,0,0,.5);font-size:13px;letter-spacing:.05em
+}
+
+@media (max-height:900px){
+  #logo{width:min(12vw,80px)}
+  h1{font-size:clamp(28px,4.5vw,42px)}
+  .subtitle{margin-bottom:12px}
+  .panel,.mode{padding:14px 17px;margin:5px 0}
+  .mode p{margin-bottom:10px}
+  .start{padding:13px 16px}
+}
+</style>
+</head>
+
+<body>
+<div id="app">
+
+  <div id="splash">
+    <img src="home.png?v=5" alt="Otticando">
+  </div>
+
+  <section id="menu">
+    <img id="logo" src="icon-512.png?v=5" alt="">
+    <h1>Otticando</h1>
+    <div class="subtitle">Test visivi</div>
+
+    <div class="panel">
+      <div class="panel-title">Distanza test per lontano</div>
+      <div id="distanceButtons">
+        <button class="dist" data-distance="3">3 m</button>
+        <button class="dist" data-distance="4">4 m</button>
+        <button class="dist active" data-distance="5">5 m</button>
+      </div>
+      <div class="note">
+        Le tavole sono considerate riferimento a 5 m. A 4 m e 3 m vengono ridotte
+        rispettivamente all'80% e 60%, senza ritaglio.
+      </div>
+    </div>
+
+    <div class="mode">
+      <div class="label">Lontano</div>
+      <h2>Test per lontano</h2>
+      <p>Sequenza completa delle tavole optometriche.</p>
+      <button id="farStart" class="start">INIZIA TEST PER LONTANO</button>
+    </div>
+
+    <div class="mode">
+      <div class="label">Vicino</div>
+      <h2>Test per vicino</h2>
+      <p>Tavola dedicata alla visione prossimale.</p>
+      <button id="nearStart" class="start gold">INIZIA TEST PER VICINO</button>
+    </div>
+  </section>
+
+  <section id="farScreen" class="screen">
+    <div class="imageStage">
+      <img id="farImage" class="testImage" alt="Test visivo per lontano">
+    </div>
+    <button id="farClose" class="close" aria-label="Torna al menu">×</button>
+    <div id="counter"></div>
+  </section>
+
+  <section id="nearScreen" class="screen">
+    <div class="imageStage">
+      <img id="nearImage" class="testImage" src="vicino.png?v=5" alt="Test visivo per vicino">
+    </div>
+    <button id="nearClose" class="close" aria-label="Torna al menu">×</button>
+  </section>
+
+</div>
+
+<script>
+/*
+  V5 pulita.
+  Nessuna immagine base64 incorporata.
+  I file vengono letti direttamente dal repository.
+  ?v=5 forza Safari/GitHub Pages a non riusare la vecchia cache.
+*/
+
+const farTests = [
+  "0.1.png?v=5",
+  "test-03.png?v=5",
+  "test-02.png?v=5",
+  "test-04.png?v=5",
+  "test-01.png?v=5",
+  "r_v.png?v=5"
+];
+
+let current = 0;
+let distance = Number(localStorage.getItem("otticandoFarDistance") || 5);
+let touchStartX = 0;
+let splashDone = false;
+
+const splash = document.getElementById("splash");
+const menu = document.getElementById("menu");
+const farScreen = document.getElementById("farScreen");
+const nearScreen = document.getElementById("nearScreen");
+const farImage = document.getElementById("farImage");
+const counter = document.getElementById("counter");
+
+function showMenu(){
+  if(!splashDone){
+    splashDone = true;
+    splash.style.display = "none";
+  }
+  farScreen.style.display = "none";
+  nearScreen.style.display = "none";
+  menu.style.display = "flex";
+}
+
+const splashTimer = setTimeout(showMenu,7000);
+splash.addEventListener("click",()=>{
+  clearTimeout(splashTimer);
+  showMenu();
+});
+
+function updateDistanceUI(){
+  document.querySelectorAll(".dist").forEach(btn=>{
+    btn.classList.toggle("active",Number(btn.dataset.distance)===distance);
+  });
+}
+
+function applyDistance(){
+  /*
+    IMPORTANTE:
+    transform non modifica il box dell'immagine e quindi non crea ritagli.
+    A 5 m = 100%, 4 m = 80%, 3 m = 60%.
+  */
+  const factor = distance / 5;
+  farImage.style.transform = `scale(${factor})`;
+  counter.textContent = `${current+1} / ${farTests.length} · ${distance} m`;
+}
+
+document.querySelectorAll(".dist").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    distance = Number(btn.dataset.distance);
+    localStorage.setItem("otticandoFarDistance",String(distance));
+    updateDistanceUI();
+  });
+});
+updateDistanceUI();
+
+function showFar(i){
+  current = i;
+  farImage.onload = applyDistance;
+  farImage.src = farTests[i];
+  applyDistance();
+  menu.style.display = "none";
+  nearScreen.style.display = "none";
+  farScreen.style.display = "flex";
+}
+
+function nextFar(){
+  if(current < farTests.length-1) showFar(current+1);
+  else showMenu();
+}
+function prevFar(){
+  if(current > 0) showFar(current-1);
+}
+function showNear(){
+  menu.style.display = "none";
+  farScreen.style.display = "none";
+  nearScreen.style.display = "flex";
+}
+
+document.getElementById("farStart").addEventListener("click",()=>showFar(0));
+document.getElementById("nearStart").addEventListener("click",showNear);
+document.getElementById("farClose").addEventListener("click",e=>{
+  e.stopPropagation(); showMenu();
+});
+document.getElementById("nearClose").addEventListener("click",e=>{
+  e.stopPropagation(); showMenu();
+});
+
+farScreen.addEventListener("click",e=>{
+  if(e.target.id==="farClose") return;
+  e.clientX > innerWidth/2 ? nextFar() : prevFar();
+});
+
+farScreen.addEventListener("touchstart",e=>{
+  touchStartX=e.changedTouches[0].screenX;
+},{passive:true});
+
+farScreen.addEventListener("touchend",e=>{
+  const dx=e.changedTouches[0].screenX-touchStartX;
+  if(Math.abs(dx)<55) return;
+  dx<0 ? nextFar() : prevFar();
+},{passive:true});
+</script>
+</body>
+</html>
